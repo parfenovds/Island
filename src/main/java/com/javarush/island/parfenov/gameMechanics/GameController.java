@@ -46,7 +46,7 @@ public class GameController {
                 for (int[] coordinates : arr) {
                     if((coordinates[0] >=0 && coordinates[0] < field[y].length) &&
                             (coordinates[1] >=0 && coordinates[1] < field.length)) {
-                        field[y][x].getCells().add(field[coordinates[1]][coordinates[0]]);
+                        field[y][x].getCellsNearby().add(field[coordinates[1]][coordinates[0]]);
                     }
                 }
             }
@@ -86,20 +86,20 @@ public class GameController {
         for (int i = 0; i < field.length; i++) {
             for (int j = 0; j < field[i].length; j++) {
                 field[i][j] = new Cell(i, j);
-                Map<String, Integer> amountOfMigrants = field[i][j].getAmountOfMigrants();
+//                Map<String, Integer> amountOfMigrants = field[i][j].getAmountOfMigrants();
                 for (Organism organism : prototypes.values()) {
                     String name = organism.getClass().getSimpleName();
-                    field[i][j].getMigrants().put(name, new HashSet<>());
-                    field[i][j].getResidents().put(name, new HashSet<>());
-                    field[i][j].getAmountOfOrganisms().put(name, 0);
+                    field[i][j].getPersons().put(name, new Vault());
+//                    field[i][j].getAmountOfOrganisms().put(name, 0);
 //                    int randomAmountOfOrganisms = random.nextInt(0, organism.getCellLimit() + 1);
                     int randomAmountOfOrganisms = organism.getCellLimit();
-                    Set<Organism> setOfCertainTypeOfOrganisms = field[i][j].getResidents().get(name);
+//                    Set<Organism> setOfCertainTypeOfOrganisms = field[i][j].getResidents().get(name);
+                    Set<Organism> setOfCertainTypeOfOrganisms = field[i][j].getCertainResidents(name);
                     for (int k = 0; k < randomAmountOfOrganisms; k++) {
                         setOfCertainTypeOfOrganisms.add(organism.clone());
                         Organism.amountOfAnimals.incrementAndGet();
                     }
-                    amountOfMigrants.put(name, 0);
+//                    amountOfMigrants.put(name, 0);
                 }
             }
         }

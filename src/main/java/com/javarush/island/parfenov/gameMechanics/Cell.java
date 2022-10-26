@@ -8,12 +8,10 @@ import java.util.concurrent.locks.ReentrantLock;
 public class Cell {
     private int y;
     private int x;
-    private Map<String, Set<Organism>> residents = new HashMap<>();
-    private Map<String, Set<Organism>> migrants = new HashMap<>();
-    private Map<String, Integer> amountOfMigrants = new HashMap<>();
-    private Map<String, Integer> amountOfOrganisms = new HashMap<>();
-    private List<Cell> cells = new ArrayList<>();
+    private Map<String, Vault> persons = new HashMap<>();
+    private List<Cell> cellsNearby = new ArrayList<>();
     private ReentrantLock lock = new ReentrantLock(true);
+
     public Cell(int y, int x) {
         this.y = y;
         this.x = x;
@@ -31,34 +29,36 @@ public class Cell {
         return x;
     }
 
-    public List<Cell> getCells() {
-        return cells;
+    public List<Cell> getCellsNearby() {
+        return cellsNearby;
     }
 
-    public Map<String, Set<Organism>> getResidents() {
-        return residents;
+    public Map<String, Vault> getPersons() {
+        return persons;
+    }
+    public Set<Organism> getCertainResidents(String name) {
+        return persons.get(name).getResidents();
+    }
+    public Set<Organism> getCertainMigrants(String name) {
+        return persons.get(name).getMigrants();
+    }
+    public ReentrantLock getVaultLock(String name) {
+        return persons.get(name).getLock();
+    }
+    public int getAmountOfMigrants(String name) {
+        return persons.get(name).getAmountOfMigrants();
     }
 
-    public void setResidents(Map<String, Set<Organism>> residents) {
-        this.residents = residents;
+    public int getAmountOfOrganisms(String name) {
+        return persons.get(name).getAmountOfOrganisms();
+    }
+    public void setAmountOfMigrants(String name, int amount) {
+        persons.get(name).setAmountOfMigrants(amount);
     }
 
-    public Map<String, Integer> getAmountOfMigrants() {
-        return amountOfMigrants;
+    public void setAmountOfOrganisms(String name, int amount) {
+        persons.get(name).setAmountOfOrganisms(amount);
     }
 
-    public Map<String, Set<Organism>> getMigrants() {
-        return migrants;
-    }
 
-    public Map<String, Integer> getAmountOfOrganisms() {
-        return amountOfOrganisms;
-    }
-
-    @Override
-    public String toString() {
-        return "Cell{" +
-                "residents=" + residents +
-                "}\n";
-    }
 }

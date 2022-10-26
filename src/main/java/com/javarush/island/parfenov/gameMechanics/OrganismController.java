@@ -29,15 +29,16 @@ public class OrganismController implements Runnable {
 //                if(organisms.isEmpty()) {
 //                    System.out.println(organismName + " is empty!");
 //                }
-                cell.getLock().lock();
+
+                cell.getVaultLock(organismName).lock();
                 try {
                     int amountOfAnimals;
-                    Set<Organism> organisms = cell.getResidents().get(organismName);
+                    Set<Organism> organisms = cell.getCertainResidents(organismName);
                     int oldAmountOfAnimals = organisms.size();
-                    organisms.addAll(cell.getMigrants().get(organismName));
-                    cell.getMigrants().get(organismName).clear();
-                    cell.getAmountOfMigrants().put(organismName, 0);
-                    Map<String, Integer> amountOfOrganisms = cell.getAmountOfOrganisms();
+                    organisms.addAll(cell.getCertainMigrants(organismName));
+                    cell.getCertainMigrants(organismName).clear();
+                    cell.setAmountOfMigrants(organismName, 0);
+                    int amountOfOrganisms = cell.getAmountOfOrganisms(organismName);
                     Iterator<Organism> iterator = organisms.iterator();
                     while(iterator.hasNext()) {
                         Organism organism = iterator.next();
@@ -45,11 +46,11 @@ public class OrganismController implements Runnable {
                             iterator.remove();
                             Organism.amountOfAnimals.decrementAndGet();
                         } else {
-
                             tasks.add(new Task(organism, cell));
                         }
                     }
-                    amountOfOrganisms.put(organismName, organisms.size());
+//                    amountOfOrganisms.put(organismName, organisms.size());
+                    cell.setAmountOfOrganisms(organismName, organisms.size());
                     amountOfAnimals = organisms.size();
                     int delta = amountOfAnimals - oldAmountOfAnimals;
                     stat.getAmountOfOrganisms().put(organismName, stat.getAmountOfOrganisms().get(organismName) + delta);
@@ -60,7 +61,7 @@ public class OrganismController implements Runnable {
 //                        tasks.add(new Task(organism, cell));
 //                    }
                 } finally {
-                    cell.getLock().unlock();
+                    cell.getVaultLock(organismName).unlock();
                 }
             }
         }
