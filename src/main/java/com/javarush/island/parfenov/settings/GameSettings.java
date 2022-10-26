@@ -12,7 +12,7 @@ public class GameSettings {
     //    private int widthOfField;
 //    private int heightOfField;
     private ScreenSettings screenSettings;
-    private final FieldSizes defaultFieldSizes = new FieldSizes(100, 20);
+    private final FieldSizes defaultFieldSizes = new FieldSizes(20, 20);
     private FieldSizes realFieldSizes;
     private Map<String, HashMap<String, Integer>> chances = new HashMap<>();
     private Map<String, HashMap<Characteristics, Number>> standardCharacteristics = new HashMap<>();
@@ -59,25 +59,25 @@ public class GameSettings {
             {null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null},
     };
     private Number[][] defaultCharacteristics = {
-            {50.0, 30, 3, 8.0},
+            {50.0, 30, 3, 8.0, 2},
 
-            {15.0, 30, 1, 3.0},
-            {8.0, 30, 2, 2.0},
-            {500.0, 5, 2, 80.0},
-            {6.0, 20, 3, 1.0},
-            {400.0, 20, 4, 60.0},
+            {15.0, 30, 1, 3.0, 2},
+            {8.0, 30, 2, 2.0, 2},
+            {500.0, 5, 2, 80.0, 10},
+            {6.0, 20, 3, 1.0, 3},
+            {400.0, 20, 4, 60.0, 3},
 
-            {300.0, 20, 4, 50.0},
+            {300.0, 20, 4, 50.0, 3},
 
-            {2.0, 150, 2, 0.45},
-            {0.05, 500, 1, 0.01},
-            {60.0, 140, 3, 10.0},
-            {70.0, 140, 3, 15.0},
-            {400.0, 50, 2, 50.0},
-            {700.0, 10, 3, 100.0},
-            {1.0, 200, 4, 0.15},
-            {0.01, 1000, 0, 0.0},
-            {1.0, 200, null, null},
+            {2.0, 150, 2, 0.45, 1},
+            {0.05, 500, 1, 0.01, 1},
+            {60.0, 140, 3, 10.0, 2},
+            {70.0, 140, 3, 15.0, 2},
+            {400.0, 50, 2, 50.0, 3},
+            {700.0, 10, 3, 100.0, 5},
+            {1.0, 200, 4, 0.15, 1},
+            {0.01, 1000, 0, 0.0, 0},
+            {1.0, 200, null, null, 0},
     };
 
     private String[] icons = {

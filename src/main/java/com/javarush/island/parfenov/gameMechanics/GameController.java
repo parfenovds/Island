@@ -91,8 +91,8 @@ public class GameController {
                     String name = organism.getClass().getSimpleName();
                     field[i][j].getPersons().put(name, new Vault());
 //                    field[i][j].getAmountOfOrganisms().put(name, 0);
-//                    int randomAmountOfOrganisms = random.nextInt(0, organism.getCellLimit() + 1);
-                    int randomAmountOfOrganisms = organism.getCellLimit();
+                    int randomAmountOfOrganisms = random.nextInt(0, organism.getCellLimit() + 1);
+//                    int randomAmountOfOrganisms = organism.getCellLimit();
 //                    Set<Organism> setOfCertainTypeOfOrganisms = field[i][j].getResidents().get(name);
                     Set<Organism> setOfCertainTypeOfOrganisms = field[i][j].getCertainResidents(name);
                     for (int k = 0; k < randomAmountOfOrganisms; k++) {

@@ -4,6 +4,8 @@ import com.javarush.island.parfenov.gameMechanics.Cell;
 import com.javarush.island.parfenov.gameMechanics.LifeStatus;
 import com.javarush.island.parfenov.gameMechanics.Phase;
 import com.javarush.island.parfenov.gameMechanics.Vault;
+import com.javarush.island.parfenov.organisms.animals.Caterpillar;
+import com.javarush.island.parfenov.organisms.animals.Mouse;
 import com.javarush.island.parfenov.settings.Characteristics;
 
 import java.awt.image.BufferedImage;
@@ -15,9 +17,9 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.IntStream;
 
 public abstract class Organism implements Cloneable {
-    public static AtomicInteger idGenerator = new AtomicInteger(0);
+    public static AtomicLong idGenerator = new AtomicLong(0L);
     public static AtomicInteger amountOfAnimals = new AtomicInteger(0);
-    private int id;
+    private long id;
     private AtomicReference<Phase> phase = new AtomicReference<>(Phase.FREE);
     private AtomicReference<LifeStatus> liveStatus = new AtomicReference<>(LifeStatus.ALIVE);
     private boolean alive = true;
@@ -25,8 +27,6 @@ public abstract class Organism implements Cloneable {
     private Double weight;
     private final Double maxWeight;
     private final Double perc;
-
-
     private AtomicLong weight2;
     private int maxWeight2;
     private int perc2;
@@ -38,11 +38,13 @@ public abstract class Organism implements Cloneable {
     private final String nameOfOrganism = this.getClass().getSimpleName();
     private final Double feedPortion;
     private Cell nextDestination = null;
-    private int pointsOfEating = 5;
+    private Integer pointsOfEating;
     private String pathToImg = "/animal_sprites/Default.png";
     private BufferedImage img;
+    private final Map<Characteristics, Number> characteristics;
 
     public Organism(Map<Characteristics, Number> characteristics, Map<String, Integer> chances) {
+        this.characteristics = characteristics;
         this.id = idGenerator.incrementAndGet();
         this.weight = (Double) characteristics.get(Characteristics.WEIGHT);
         this.weight2 = new AtomicLong(Math.round((Double) characteristics.get(Characteristics.WEIGHT) * 1000.0));
@@ -53,25 +55,16 @@ public abstract class Organism implements Cloneable {
         movingPoints = maxCellByMove;
         this.feedPortion = (Double) characteristics.get(Characteristics.FEED_PORTION);
         this.chances = chances;
+        this.pointsOfEating = (Integer) characteristics.get(Characteristics.POINTS_OF_EATING);
     }
 
     public void multiply(Cell cell) {
         boolean multiplyOrNot = ThreadLocalRandom.current().nextBoolean();
-        if ((multiplyOrNot || this instanceof Plants) &&
-//                cell.getResidents().get(nameOfOrganism).size() + cell.getAmountOfMigrants().get(nameOfOrganism) < cellLimit) {
-                cell.getCertainResidents(nameOfOrganism).size() + cell.getCertainMigrants(nameOfOrganism).size() < cellLimit) {
-            if (this instanceof Animal) {
-//                cell.getAmountOfMigrants().merge(nameOfOrganism, 1, Integer::sum);
-                cell.setAmountOfMigrants(nameOfOrganism, cell.getAmountOfMigrants(nameOfOrganism) + 1);
-//                cell.getMigrants().get(nameOfOrganism).add(this.clone());
-                cell.getCertainMigrants(nameOfOrganism).add(this.clone());
-                this.weight /= 2;
-            } else {
-                while (cell.getCertainResidents(nameOfOrganism).size() + cell.getCertainMigrants(nameOfOrganism).size() < cellLimit) {
-                    cell.setAmountOfMigrants(nameOfOrganism, cell.getAmountOfMigrants(nameOfOrganism) + 1);
-                    cell.getCertainMigrants(nameOfOrganism).add(this.clone());
-                }
-            }
+        if (multiplyOrNot &&
+            cell.getCertainResidents(nameOfOrganism).size() + cell.getCertainMigrants(nameOfOrganism).size() < cellLimit) {
+            cell.setAmountOfMigrants(nameOfOrganism, cell.getAmountOfMigrants(nameOfOrganism) + 1);
+            cell.getCertainMigrants(nameOfOrganism).add(this.clone());
+            this.weight /= 2;
         }
     }
 
@@ -79,12 +72,15 @@ public abstract class Organism implements Cloneable {
         boolean moveOrNot = ThreadLocalRandom.current().nextBoolean();
         if (moveOrNot && isAlive() && movingPoints > 0) {
             Cell destCell = findNextCell(srcCell);
-            if (destCell != null) {
-                //destCell.getAmountOfMigrants().merge(nameOfOrganism, 1, Integer::sum);
+            if (destCell != null && destCell != srcCell) {
+//                if(this instanceof Mouse) System.out.println("MOUSE!!!");
+//                if(this instanceof Mouse) {
+//                    System.out.println("I moved!");
+//                }
                 destCell.setAmountOfMigrants(nameOfOrganism, destCell.getAmountOfMigrants(nameOfOrganism) + 1);
                 destCell.getCertainMigrants(nameOfOrganism).add(this);
-//                destCell.getMigrants().get(nameOfOrganism).add(this);
                 nextDestination = destCell;
+//                System.out.println("old cell: " + srcCell + ", new cell: " + destCell);
             }
             movingPoints = maxCellByMove;
         }
@@ -101,7 +97,7 @@ public abstract class Organism implements Cloneable {
                 if (organisms.size() + destCell.getAmountOfMigrants(nameOfOrganism) < cellLimit) {
                     movingPoints--;
                     Cell res = findNextCell(destCell);
-                    return Objects.requireNonNullElse(res, srcCell);
+                    return Objects.requireNonNullElse(res, destCell);
                 }
             }
         }
@@ -109,32 +105,36 @@ public abstract class Organism implements Cloneable {
     }
 
     public void changeWeightByTime() {
-        if (this instanceof Plants) {
-            weight += perc;
-        } else {
-            weight -= perc;
-        }
+        weight -= perc;
         if (weight <= 0) {
             this.alive = false;
         }
     }
 
     public void eat(Cell cell) {//TODO check if no points
+        int points = pointsOfEating;
         if (weight < maxWeight / 2 /*|| this instanceof Herbivore*/) {
             boolean unexpectedDeath = false;
             for (Map.Entry<String, Vault> entry : cell.getPersons().entrySet()) {//TODO change to more random (or more smart) searching of victim
-                if (unexpectedDeath || (pointsOfEating == 0 && this instanceof Carnivore) || phase.get() == Phase.BUSY || weight > maxWeight)
+                if (unexpectedDeath || (pointsOfEating == 0 /*&& this instanceof Carnivore*/) || phase.get() == Phase.BUSY || weight > maxWeight)
                     break;//TODO change points compare to <= (make less brittle)
                 String name = entry.getKey();
                 if (cell.getCertainResidents(name).isEmpty()) continue;
                 Integer chance = chances.get(name);
                 if (chance != null && chance > 0) {
-                    for (Organism victim : entry.getValue().getResidents()) {
+                    Set<Organism> residents = entry.getValue().getResidents();
+                    for (int i = 0; i < pointsOfEating && points > 0; i++) {
+                        Organism victim = residents.stream().skip(ThreadLocalRandom.current().nextInt(0, residents.size())).findFirst().orElse(null);
+//                    }
+//                    for (Organism victim : entry.getValue().getResidents()) {
+                        if (unexpectedDeath || (pointsOfEating == 0 /*&& this instanceof Carnivore*/) || phase.get() == Phase.BUSY || weight > maxWeight) {
+                            break;
+                        }
                         if (victim.isAlive() && victim.phase.compareAndSet(Phase.FREE, Phase.BUSY)) {
+                            points--;
                             if (phase.compareAndSet(Phase.FREE, Phase.BUSY)) {
                                 if (isAlive()) {
                                     if (victim.isAlive()) {
-                                        pointsOfEating--;
                                         int res = ThreadLocalRandom.current().nextInt(1, 101);
                                         if (res <= chance) {
                                             double atePortion = Math.min(Math.min(victim.getWeight(), this.feedPortion), maxWeight - weight);
@@ -168,23 +168,24 @@ public abstract class Organism implements Cloneable {
 
                 }
             }
-            pointsOfEating = 5;
+//            System.out.println(counter + "!");
+//            pointsOfEating = (Integer) characteristics.get(Characteristics.POINTS_OF_EATING);
         }
     }
 
-    public static AtomicInteger getIdGenerator() {
+    public static AtomicLong getIdGenerator() {
         return idGenerator;
     }
 
-    public static void setIdGenerator(AtomicInteger idGenerator) {
+    public static void setIdGenerator(AtomicLong idGenerator) {
         Organism.idGenerator = idGenerator;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -306,5 +307,41 @@ public abstract class Organism implements Cloneable {
 
     public Cell getNextDestination() {
         return nextDestination;
+    }
+
+    public static AtomicInteger getAmountOfAnimals() {
+        return amountOfAnimals;
+    }
+
+    public Double getMaxWeight() {
+        return maxWeight;
+    }
+
+    public AtomicLong getWeight2() {
+        return weight2;
+    }
+
+    public int getMaxWeight2() {
+        return maxWeight2;
+    }
+
+    public int getPerc2() {
+        return perc2;
+    }
+
+    public Integer getMovingPoints() {
+        return movingPoints;
+    }
+
+    public String getNameOfOrganism() {
+        return nameOfOrganism;
+    }
+
+    public Integer getPointsOfEating() {
+        return pointsOfEating;
+    }
+
+    public Map<Characteristics, Number> getCharacteristics() {
+        return characteristics;
     }
 }

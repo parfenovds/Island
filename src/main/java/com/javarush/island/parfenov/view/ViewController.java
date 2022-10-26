@@ -3,7 +3,6 @@ package com.javarush.island.parfenov.view;
 import com.javarush.island.parfenov.gameMechanics.Cell;
 import com.javarush.island.parfenov.gameMechanics.GameController;
 import com.javarush.island.parfenov.gameMechanics.Vault;
-import com.javarush.island.parfenov.organisms.Organism;
 import com.javarush.island.parfenov.settings.GameSettings;
 import com.javarush.island.parfenov.settings.ScreenSettings;
 import com.javarush.island.parfenov.statistics.Stat;
@@ -12,7 +11,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.Map;
-import java.util.Set;
 
 public class ViewController extends JFrame {
 
@@ -75,6 +73,7 @@ public class ViewController extends JFrame {
         Map<String, ImageIcon> icons = gameScreen.getIcons();
         ImageIcon emptyImage = icons.get("Empty");
         while(true) {
+//            System.out.println(stat.getFullSize().get() + "!!!!!");
             for (int y = 0; y < field.length; y++) {
                 for (int x = 0; x < field[y].length; x++) {
                     String groupName = getBiggestGroup(field[y][x].getPersons());
@@ -100,7 +99,7 @@ public class ViewController extends JFrame {
         int amount = 0;
         for (Map.Entry<String, Vault> entry : persons.entrySet()) {
 //            int sizeOfGroup = entry.getValue().size();
-            int sizeOfGroup = entry.getValue().getAmountOfOrganisms();
+            int sizeOfGroup = entry.getValue().getAmountOfResidents();
             if (sizeOfGroup > amount) {
                 amount = sizeOfGroup;
                 result = entry.getKey();

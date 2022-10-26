@@ -49,15 +49,15 @@ public class Cell {
         return persons.get(name).getAmountOfMigrants();
     }
 
-    public int getAmountOfOrganisms(String name) {
-        return persons.get(name).getAmountOfOrganisms();
+    public int getAmountOfResidents(String name) {
+        return persons.get(name).getAmountOfResidents();
     }
     public void setAmountOfMigrants(String name, int amount) {
         persons.get(name).setAmountOfMigrants(amount);
     }
 
-    public void setAmountOfOrganisms(String name, int amount) {
-        persons.get(name).setAmountOfOrganisms(amount);
+    public void setAmountOfResidents(String name, int amount) {
+        persons.get(name).setAmountOfResidents(amount);
     }
 
 

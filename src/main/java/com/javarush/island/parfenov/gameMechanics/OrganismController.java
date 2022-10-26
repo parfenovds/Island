@@ -4,7 +4,6 @@ import com.javarush.island.parfenov.organisms.Organism;
 import com.javarush.island.parfenov.statistics.Stat;
 
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class OrganismController implements Runnable {
     String organismName;
@@ -23,6 +22,7 @@ public class OrganismController implements Runnable {
     public void run() {
 //        System.out.println("My thread is " + Thread.currentThread().getName());
         long n = System.currentTimeMillis();
+//        int counter = 0;
         for (Cell[] cells : field) {
             for (Cell cell : cells) {
                 //Set<Organism> organisms = cell.getResidents().get(organismName);
@@ -38,7 +38,7 @@ public class OrganismController implements Runnable {
                     organisms.addAll(cell.getCertainMigrants(organismName));
                     cell.getCertainMigrants(organismName).clear();
                     cell.setAmountOfMigrants(organismName, 0);
-                    int amountOfOrganisms = cell.getAmountOfOrganisms(organismName);
+//                    int amountOfOrganisms = cell.getAmountOfResidents(organismName);
                     Iterator<Organism> iterator = organisms.iterator();
                     while(iterator.hasNext()) {
                         Organism organism = iterator.next();
@@ -50,12 +50,15 @@ public class OrganismController implements Runnable {
                         }
                     }
 //                    amountOfOrganisms.put(organismName, organisms.size());
-                    cell.setAmountOfOrganisms(organismName, organisms.size());
+                    cell.setAmountOfResidents(organismName, organisms.size());
                     amountOfAnimals = organisms.size();
                     int delta = amountOfAnimals - oldAmountOfAnimals;
                     stat.getAmountOfOrganisms().put(organismName, stat.getAmountOfOrganisms().get(organismName) + delta);
-                    stat.getFullSize().addAndGet(delta);
-
+//                    stat.getFullSize().addAndGet(delta);
+                    stat.setFullSize(stat.getFullSize().get() + delta);
+                    Organism.amountOfAnimals.addAndGet(delta);
+//                    counter = organisms.size();
+//
 
 //                    for (Organism organism : organisms) {
 //                        tasks.add(new Task(organism, cell));
@@ -65,6 +68,7 @@ public class OrganismController implements Runnable {
                 }
             }
         }
+//        System.out.println(Organism.getAmountOfAnimals().get() + "@@@@@");
         System.out.println("A time of the first part: " + (System.currentTimeMillis() - n));
         n = System.currentTimeMillis();
         tasks.forEach(Task::execute);

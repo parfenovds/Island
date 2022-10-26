@@ -35,7 +35,7 @@ public class Stat {
         return fullSize;
     }
 
-    public void setFullSize(AtomicInteger fullSize) {
-        this.fullSize = fullSize;
+    public void setFullSize(int size) {
+        this.fullSize.set(size);
     }
 }

@@ -37,7 +37,7 @@ public class PoolController {
             servicePool.shutdown();
             try {
                 long m = System.currentTimeMillis();
-                if(servicePool.awaitTermination(100, TimeUnit.SECONDS)) {
+                if(servicePool.awaitTermination(1000, TimeUnit.SECONDS)) {
                     System.out.println("Hello from " + Thread.currentThread().getName() + " with time " + (System.currentTimeMillis() - m));
 //                    Cell[][] field = gameController.getField();
 //                    for (Cell[] cells : field) {
@@ -49,6 +49,6 @@ public class PoolController {
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
-        }, 100, 100, TimeUnit.MILLISECONDS);
+        }, 1000, 1000, TimeUnit.MILLISECONDS);
     }
 }

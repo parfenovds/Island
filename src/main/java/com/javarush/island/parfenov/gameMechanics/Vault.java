@@ -2,9 +2,7 @@ package com.javarush.island.parfenov.gameMechanics;
 
 import com.javarush.island.parfenov.organisms.Organism;
 
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -12,7 +10,7 @@ public class Vault {
     private Set<Organism> residents = new HashSet<>();
     private Set<Organism> migrants = new HashSet<>();
     private int amountOfMigrants;
-    private int amountOfOrganisms;
+    private int amountOfResidents;
     private ReentrantLock lock = new ReentrantLock(true);
 
     public Set<Organism> getResidents() {
@@ -35,16 +33,17 @@ public class Vault {
         return amountOfMigrants;
     }
 
-    public int getAmountOfOrganisms() {
-        return amountOfOrganisms;
+    public int getAmountOfResidents() {
+//        return residents.size();
+        return amountOfResidents;
     }
 
     public void setAmountOfMigrants(int amountOfMigrants) {
         this.amountOfMigrants = amountOfMigrants;
     }
 
-    public void setAmountOfOrganisms(int amountOfOrganisms) {
-        this.amountOfOrganisms = amountOfOrganisms;
+    public void setAmountOfResidents(int amountOfResidents) {
+        this.amountOfResidents = amountOfResidents;
     }
 
     public ReentrantLock getLock() {

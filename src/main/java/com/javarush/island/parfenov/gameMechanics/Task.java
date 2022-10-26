@@ -13,9 +13,9 @@ public class Task {
 
     public void execute() {
         organism.multiply(cell);
-        organism.eat(cell);
         organism.changeWeightByTime();
         if(organism instanceof Animal) {
+            organism.eat(cell);
             organism.move(cell);
         }
     }
