@@ -1,11 +1,9 @@
 package com.javarush.island.parfenov.organisms;
 
 import com.javarush.island.parfenov.gameMechanics.Cell;
-import com.javarush.island.parfenov.organisms.animals.Caterpillar;
 import com.javarush.island.parfenov.settings.Characteristics;
 
 import java.util.Map;
-import java.util.concurrent.ThreadLocalRandom;
 
 public abstract class Plants extends Organism{
     public Plants(Map<Characteristics, Number> characteristics, Map<String, Integer> chances) {
@@ -24,7 +22,7 @@ public abstract class Plants extends Organism{
     }
 
     public void changeWeightByTime() {
-        setWeight(getWeight() + getPerc());
+        setWeight(getWeight() + getPercent());
         if (getWeight() <= 0) {
             setAlive(false);
         }

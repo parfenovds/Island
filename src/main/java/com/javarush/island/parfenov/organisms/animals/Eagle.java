@@ -8,7 +8,6 @@ import java.util.Map;
 
 public class Eagle extends Animal implements Carnivore {
 
-    private String pathToImg = "/animal_sprites/Eagle.png";
     public Eagle(Map<Characteristics, Number> characteristics, Map<String, Integer> chances) {
         super(characteristics, chances);
     }

@@ -8,7 +8,6 @@ import java.util.Map;
 
 public class Fox extends Animal implements Carnivore {
 
-    private String pathToImg = "/animal_sprites/Fox.png";
     public Fox(Map<Characteristics, Number> characteristics, Map<String, Integer> chances) {
         super(characteristics, chances);
     }

@@ -1,8 +1,8 @@
 package com.javarush.island.parfenov.settings;
 
 public class FieldSizes {
-    private int width;
-    private int height;
+    private final int width;
+    private final int height;
 
     public FieldSizes(int width, int height) {
         this.width = width;
@@ -13,15 +13,7 @@ public class FieldSizes {
         return width;
     }
 
-    public void setWidth(int width) {
-        this.width = width;
-    }
-
     public int getHeight() {
         return height;
-    }
-
-    public void setHeight(int height) {
-        this.height = height;
     }
 }

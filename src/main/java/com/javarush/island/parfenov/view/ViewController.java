@@ -4,41 +4,37 @@ import com.javarush.island.parfenov.gameMechanics.Cell;
 import com.javarush.island.parfenov.gameMechanics.GameController;
 import com.javarush.island.parfenov.gameMechanics.Vault;
 import com.javarush.island.parfenov.settings.GameSettings;
-import com.javarush.island.parfenov.settings.ScreenSettings;
 import com.javarush.island.parfenov.statistics.Stat;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.util.Map;
 
 public class ViewController extends JFrame {
 
     public static final Color BACKGROUND_COLOR = new Color(48, 80, 55);
     public static final Color BORDER_COLOR = new Color(80, 48, 73);
-    private ScreenSettings screenSettings;
-    private GameSettings gameSettings;
-    private GameController gameController;
-    private GameScreen gameScreen;
-    private RightPanel rightPanel;
-    private double timePerFrame;
+    private final GameController gameController;
+    private final GameScreen gameScreen;
+    private final RightPanel rightPanel;
+    private final double timePerFrame;
     private long lastFrame;
-    private int height;
-    private int width;
-    private Stat stat;
-    public ViewController(GameSettings gameSettings, ScreenSettings screenSettings, GameController gameController, Stat stat) {
+    private final int height;
+    private final int width;
+    private final Stat stat;
+    private final int CELL_SIZE = 48;
+    public ViewController(GameSettings gameSettings, GameController gameController, Stat stat) {
         this.gameController = gameController;
-        this.screenSettings = screenSettings;
         this.stat = stat;
         this.height = gameSettings.getRealFieldHeight();
         this.width = gameSettings.getRealFieldWidth();
-        int widthOfScreen = gameSettings.getRealFieldWidth() * screenSettings.getCellSize();
-        int heightOfScreen = gameSettings.getRealFieldHeight() * screenSettings.getCellSize();
+        int widthOfScreen = gameSettings.getRealFieldWidth() * CELL_SIZE;
+        int heightOfScreen = gameSettings.getRealFieldHeight() * CELL_SIZE;
         setSize(widthOfScreen + 200, heightOfScreen + 200);
         setResizable(true);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
-        gameScreen = new GameScreen(gameController, gameSettings, screenSettings);
+        gameScreen = new GameScreen(gameController);
         timePerFrame = 1_000_000_000.0 / 10.0;
         rightPanel = new RightPanel(gameSettings);
         System.out.println(gameSettings.getRealFieldHeight());
@@ -68,25 +64,24 @@ public class ViewController extends JFrame {
     public void gameLoop() {
         Cell[][] field = gameScreen.getField();
         Map<Cell, CButton> buttons = gameScreen.getButtons();
-
-        Map<String, BufferedImage> images = gameScreen.getImages();
         Map<String, ImageIcon> icons = gameScreen.getIcons();
         ImageIcon emptyImage = icons.get("Empty");
+
         while(true) {
-//            System.out.println(stat.getFullSize().get() + "!!!!!");
-            for (int y = 0; y < field.length; y++) {
-                for (int x = 0; x < field[y].length; x++) {
-                    String groupName = getBiggestGroup(field[y][x].getPersons());
+            for (Cell[] cells : field) {
+                for (Cell cell : cells) {
+                    String groupName = getBiggestGroup(cell.getPersons());
                     if (!groupName.isEmpty()) {
-                        buttons.get(field[y][x]).changeImage(icons.get(groupName));
+                        buttons.get(cell).changeImage(icons.get(groupName));
                     } else {
-                        buttons.get(field[y][x]).changeImage(emptyImage);
+                        buttons.get(cell).changeImage(emptyImage);
                     }
                 }
             }
-//            for (Map.Entry<JLabel, String> entry : rightPanel.getLabelTo().entrySet()) {
-//
-//            }
+            for (Map.Entry<String, Integer> entry : stat.getAmountOfOrganisms().entrySet()) {
+                JLabel label = rightPanel.getNameToLabel().get(entry.getKey());
+                label.setText(rightPanel.getNameToUnicode().get(entry.getKey()) + entry.getValue());
+            }
             if (System.nanoTime() - lastFrame >= timePerFrame) {
                 lastFrame = System.nanoTime();
                 repaint();
@@ -98,7 +93,6 @@ public class ViewController extends JFrame {
         String result = "";
         int amount = 0;
         for (Map.Entry<String, Vault> entry : persons.entrySet()) {
-//            int sizeOfGroup = entry.getValue().size();
             int sizeOfGroup = entry.getValue().getAmountOfResidents();
             if (sizeOfGroup > amount) {
                 amount = sizeOfGroup;
@@ -107,7 +101,4 @@ public class ViewController extends JFrame {
         }
         return result;
     }
-
-
-
 }

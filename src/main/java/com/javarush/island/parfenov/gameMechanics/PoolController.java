@@ -10,10 +10,12 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class PoolController {
-    GameController gameController;
-    ViewInitializer viewInitializer;
+    public static final int TIMEOUT = 100;
+    private final GameController gameController;
+    private final ViewInitializer viewInitializer;
 
-    private Stat stat;
+    private final Stat stat;
+
     public PoolController(GameController gameController, ViewInitializer viewInitializer, Stat stat) {
         this.gameController = gameController;
         this.viewInitializer = viewInitializer;
@@ -30,25 +32,14 @@ public class PoolController {
                 .map(o -> new OrganismController(gameController, o, stat))
                 .toList();
         executorService.scheduleAtFixedRate(() -> {
-//            ExecutorService servicePool = Executors.newFixedThreadPool(16);
             ExecutorService servicePool = Executors.newWorkStealingPool();
-//            ExecutorService servicePool = Executors.newCachedThreadPool();
             workers.forEach(servicePool::submit);
             servicePool.shutdown();
             try {
-                long m = System.currentTimeMillis();
-                if(servicePool.awaitTermination(1000, TimeUnit.SECONDS)) {
-                    System.out.println("Hello from " + Thread.currentThread().getName() + " with time " + (System.currentTimeMillis() - m));
-//                    Cell[][] field = gameController.getField();
-//                    for (Cell[] cells : field) {
-//                        for (Cell cell : cells) {
-//
-//                        }
-//                    }
-                }
+                servicePool.awaitTermination(TIMEOUT, TimeUnit.SECONDS);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
-        }, 1000, 1000, TimeUnit.MILLISECONDS);
+        }, TIMEOUT, TIMEOUT, TimeUnit.MILLISECONDS);
     }
 }
