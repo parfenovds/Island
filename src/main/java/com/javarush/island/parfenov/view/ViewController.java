@@ -28,6 +28,7 @@ public class ViewController extends JFrame {
     private int width;
     private Stat stat;
     public ViewController(GameSettings gameSettings, ScreenSettings screenSettings, GameController gameController, Stat stat) {
+
         this.gameController = gameController;
         this.screenSettings = screenSettings;
         this.stat = stat;
