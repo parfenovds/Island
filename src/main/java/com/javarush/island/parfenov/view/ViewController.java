@@ -29,6 +29,7 @@ public class ViewController extends JFrame {
     private Stat stat;
     public ViewController(GameSettings gameSettings, ScreenSettings screenSettings, GameController gameController, Stat stat) {
         this.gameController = gameController;
+
         this.screenSettings = screenSettings;
         this.stat = stat;
         this.height = gameSettings.getRealFieldHeight();
