@@ -10,9 +10,9 @@ public class OrganismController implements Runnable {
     private final Cell[][] field;
     private final Queue<Task> tasks = new LinkedList<>();
     private final Stat stat;
-    public OrganismController(GameController gameController, String organismName, Stat stat) {
+    public OrganismController(GameInitializer gameInitializer, String organismName, Stat stat) {
         this.organismName = organismName;
-        field = gameController.getField();
+        field = gameInitializer.getField();
         this.stat = stat;
     }
 

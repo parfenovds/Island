@@ -1,22 +1,22 @@
 package com.javarush.island.parfenov.view;
 
-import com.javarush.island.parfenov.gameMechanics.GameController;
+import com.javarush.island.parfenov.gameMechanics.GameInitializer;
 import com.javarush.island.parfenov.settings.GameSettings;
 import com.javarush.island.parfenov.statistics.Stat;
 
 public class ViewInitializer implements Runnable{
     GameSettings gameSettings;
-    GameController gameController;
+    GameInitializer gameInitializer;
     Stat stat;
-    public ViewInitializer(GameSettings gameSettings, GameController gameController, Stat stat) {
+    public ViewInitializer(GameSettings gameSettings, GameInitializer gameInitializer, Stat stat) {
         this.gameSettings = gameSettings;
-        this.gameController = gameController;
+        this.gameInitializer = gameInitializer;
         this.stat = stat;
     }
 
     @Override
     public void run() {
-        ViewController viewController = new ViewController(gameSettings, gameController, stat);
+        ViewController viewController = new ViewController(gameSettings, gameInitializer, stat);
         viewController.gameLoop();
     }
 }

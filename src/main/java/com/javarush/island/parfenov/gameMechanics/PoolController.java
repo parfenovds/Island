@@ -11,13 +11,13 @@ import java.util.concurrent.TimeUnit;
 
 public class PoolController {
     public static final int TIMEOUT = 100;
-    private final GameController gameController;
+    private final GameInitializer gameInitializer;
     private final ViewInitializer viewInitializer;
 
     private final Stat stat;
 
-    public PoolController(GameController gameController, ViewInitializer viewInitializer, Stat stat) {
-        this.gameController = gameController;
+    public PoolController(GameInitializer gameInitializer, ViewInitializer viewInitializer, Stat stat) {
+        this.gameInitializer = gameInitializer;
         this.viewInitializer = viewInitializer;
         this.stat = stat;
     }
@@ -25,11 +25,11 @@ public class PoolController {
     public void begin() {
         ScheduledExecutorService executorService = Executors.newScheduledThreadPool(2);//1 + gameController.getPrototypes().size());
         executorService.execute(viewInitializer);
-        List<OrganismController> workers = gameController
+        List<OrganismController> workers = gameInitializer
                 .getPrototypes()
                 .keySet()
                 .stream()
-                .map(o -> new OrganismController(gameController, o, stat))
+                .map(o -> new OrganismController(gameInitializer, o, stat))
                 .toList();
         executorService.scheduleAtFixedRate(() -> {
             ExecutorService servicePool = Executors.newWorkStealingPool();

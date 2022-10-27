@@ -8,12 +8,12 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
-public class GameController {
+public class GameInitializer {
     private final Map<String, Organism> prototypes = new HashMap<>();
     private final GameSettings gameSettings;
     private Cell[][] field;
 
-    public GameController(GameSettings gameSettings) {
+    public GameInitializer(GameSettings gameSettings) {
         this.gameSettings = gameSettings;
         prototypesInit(gameSettings);
         prepareField();

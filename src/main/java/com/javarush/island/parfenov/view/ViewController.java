@@ -1,7 +1,7 @@
 package com.javarush.island.parfenov.view;
 
 import com.javarush.island.parfenov.gameMechanics.Cell;
-import com.javarush.island.parfenov.gameMechanics.GameController;
+import com.javarush.island.parfenov.gameMechanics.GameInitializer;
 import com.javarush.island.parfenov.gameMechanics.Vault;
 import com.javarush.island.parfenov.settings.GameSettings;
 import com.javarush.island.parfenov.statistics.Stat;
@@ -14,7 +14,7 @@ public class ViewController extends JFrame {
 
     public static final Color BACKGROUND_COLOR = new Color(48, 80, 55);
     public static final Color BORDER_COLOR = new Color(80, 48, 73);
-    private final GameController gameController;
+    private final GameInitializer gameInitializer;
     private final GameScreen gameScreen;
     private final RightPanel rightPanel;
     private final double timePerFrame;
@@ -23,8 +23,8 @@ public class ViewController extends JFrame {
     private final int width;
     private final Stat stat;
     private final int CELL_SIZE = 48;
-    public ViewController(GameSettings gameSettings, GameController gameController, Stat stat) {
-        this.gameController = gameController;
+    public ViewController(GameSettings gameSettings, GameInitializer gameInitializer, Stat stat) {
+        this.gameInitializer = gameInitializer;
         this.stat = stat;
         this.height = gameSettings.getRealFieldHeight();
         this.width = gameSettings.getRealFieldWidth();
@@ -34,7 +34,7 @@ public class ViewController extends JFrame {
         setResizable(true);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
-        gameScreen = new GameScreen(gameController);
+        gameScreen = new GameScreen(gameInitializer);
         timePerFrame = 1_000_000_000.0 / 10.0;
         rightPanel = new RightPanel(gameSettings);
         System.out.println(gameSettings.getRealFieldHeight());
@@ -52,7 +52,7 @@ public class ViewController extends JFrame {
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
                 CButton valueButton = new CButton(gameScreen);
-                Cell key = gameController.getField()[y][x];
+                Cell key = gameInitializer.getField()[y][x];
                 buttons.put(key, valueButton);
                 valueButton.setBackground(BACKGROUND_COLOR);
                 valueButton.setBorder(BorderFactory.createLineBorder(BORDER_COLOR));

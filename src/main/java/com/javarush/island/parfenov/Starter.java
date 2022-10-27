@@ -1,6 +1,6 @@
 package com.javarush.island.parfenov;
 
-import com.javarush.island.parfenov.gameMechanics.GameController;
+import com.javarush.island.parfenov.gameMechanics.GameInitializer;
 import com.javarush.island.parfenov.gameMechanics.PoolController;
 import com.javarush.island.parfenov.settings.GameSettings;
 import com.javarush.island.parfenov.statistics.Stat;
@@ -10,10 +10,10 @@ public class Starter {
 
     public static void main(String[] args) {
         GameSettings gameSettings = new GameSettings();
-        GameController gameController = new GameController(gameSettings);
-        Stat stat = new Stat(gameController);
-        ViewInitializer viewInitializer = new ViewInitializer(gameSettings, gameController, stat);
-        PoolController poolController = new PoolController(gameController, viewInitializer, stat);
+        GameInitializer gameInitializer = new GameInitializer(gameSettings);
+        Stat stat = new Stat(gameInitializer);
+        ViewInitializer viewInitializer = new ViewInitializer(gameSettings, gameInitializer, stat);
+        PoolController poolController = new PoolController(gameInitializer, viewInitializer, stat);
         poolController.begin();
     }
 }

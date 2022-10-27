@@ -1,7 +1,7 @@
 package com.javarush.island.parfenov.view;
 
 import com.javarush.island.parfenov.gameMechanics.Cell;
-import com.javarush.island.parfenov.gameMechanics.GameController;
+import com.javarush.island.parfenov.gameMechanics.GameInitializer;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -18,13 +18,13 @@ public class GameScreen extends JPanel {
     private final Map<String, ImageIcon> icons = new HashMap<>();
 
 
-    public GameScreen(GameController gameController) {
-        this.field = gameController.getField();
-        imgInit(gameController);
+    public GameScreen(GameInitializer gameInitializer) {
+        this.field = gameInitializer.getField();
+        imgInit(gameInitializer);
     }
 
-    private void imgInit(GameController gameController) {
-        for (String name : gameController.getPrototypes().keySet()) {
+    private void imgInit(GameInitializer gameInitializer) {
+        for (String name : gameInitializer.getPrototypes().keySet()) {
             try (InputStream inputStream = getClass().getResourceAsStream("/animal_sprites/" + name + ".png")) {
                 assert inputStream != null;
                 BufferedImage read = ImageIO.read(inputStream);
